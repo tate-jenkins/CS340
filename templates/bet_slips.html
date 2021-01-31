@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+
+<br>
+<div class="form-wrapper">
+<form method="POST" action="">
+    <fieldset>
+        <legend>Add Bet Slip</legend>
+        User <input type="text" name="user" />
+        <br>
+        Wager <input type="number" name="wager" />
+        <br>
+        Bet Type <input type="text" name="bet_type" />
+        <br>
+        <input type="submit" class="button">
+    </fieldset>
+</form>
+</div>
+{% endblock %}

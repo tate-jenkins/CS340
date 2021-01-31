@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<br>
+<div id="table-wrapper">
+<table border = 1>
+    <legend>Users</legend>
+    {% for user in userDetails %}
+    <tr>
+        <td> {{ user[0] }} </td>
+        <td> {{ user[1] }} </td>
+    </tr>
+    {% endfor %}
+</div>
+{% endblock %}
