@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<br>
+<div class="form-wrapper">
+<form method="POST" action="">
+    <fieldset>
+        <legend>Add Game</legend>
+        Team A <input type="text" name="team_a" />
+        <br>
+        Team B <input type="text" name="team_b" />
+        <br>
+        
+        Spread <input type="number" name="spread" />
+        <br>
+        <input type="submit" class="button">
+    </fieldset>
+</form>
+</div>
+<br>
+<div class="form-wrapper">
+<form method="POST" action="">
+    <fieldset>
+        <legend>Update Game</legend>
+        <label for="game">Game </label>
+        <select name="game" id="game">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <br>
+        Spread <input type="number" name="spread" />
+        <br>
+        <input type="submit" class="button">
+    </fieldset>
+</form>
+</div>
+{% endblock %}

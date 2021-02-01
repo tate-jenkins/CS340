@@ -1,0 +1,4 @@
+mysql_host: 'classmysql.engr.oregonstate.edu'
+mysql_user: 'cs340_jenkinta'
+mysql_password: '1234'
+mysql_db: 'cs340_jenkinta'
