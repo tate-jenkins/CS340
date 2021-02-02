@@ -1,0 +1,4 @@
+mysql_host: 'classmysql.engr.oregonstate.edu'
+mysql_user: 'cs340_wyborskv'
+mysql_password: '1826'
+mysql_db: 'cs340_wyborskv'

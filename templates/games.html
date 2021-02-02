@@ -39,4 +39,27 @@
     </fieldset>
 </form>
 </div>
+<br>
+<div id="table-wrapper">
+<table border = 1>
+    <legend>Games</legend>
+    <tr>
+        <th>Team A</th>
+        <th>Team A Odds</th>
+        <th>Team B</th>
+        <th>Team B Odds</th>
+        <th>Spread</th>
+        <th>Over / Under</th>
+    </tr>
+    {% for game in games %}
+    <tr>
+        <td> {{ game[0] }} </td>
+        <td> {{ game[1] }} </td>
+        <td> {{ game[2] }} </td>
+        <td> {{ game[3] }} </td>
+        <td> {{ game[4] }} </td>
+        <td> {{ game[5] }} </td>
+    </tr>
+    {% endfor %}
+</div>
 {% endblock %}

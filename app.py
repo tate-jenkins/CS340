@@ -5,7 +5,7 @@ import yaml
 
 app = Flask(__name__)
 
-db = yaml.load(open('templates/db.yaml'))
+db = yaml.load(open('templates/dbv.yaml'))
 app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_USER'] = db['mysql_user']
 app.config['MYSQL_PASSWORD'] = db['mysql_password']
@@ -16,7 +16,7 @@ mysql = MySQL(app)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM users")
+    resultValue = cur.execute("SELECT * FROM Users")
     if resultValue > 0:
         userDetails = cur.fetchall()
         return render_template('index.html', userDetails=userDetails)
@@ -30,12 +30,12 @@ def users():
         username = userDetails['username']
         balance = userDetails['balance']
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO users(username, balance) VALUES(%s, %s)", (username, balance))
+        cur.execute("INSERT INTO Users(username, balance) VALUES(%s, %s)", (username, balance))
         mysql.connection.commit()
         cur.close()
         return redirect('/')
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM users")
+    resultValue = cur.execute("SELECT * FROM Users")
     if resultValue > 0:
         userDetails = cur.fetchall()
         return render_template('users.html', userDetails=userDetails)
@@ -44,7 +44,7 @@ def users():
 @app.route('/bet_slips')
 def bet_slips():
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM users")
+    resultValue = cur.execute("SELECT * FROM Users")
     if resultValue > 0:
         userDetails = cur.fetchall()
         return render_template('bet_slips.html', userDetails=userDetails)
@@ -52,10 +52,10 @@ def bet_slips():
 @app.route('/games')
 def games():
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM users")
+    resultValue = cur.execute("SELECT team_a, team_a_odds, team_b, team_b_odds, spread, over_under_line FROM Games")
     if resultValue > 0:
-        userDetails = cur.fetchall()
-        return render_template('games.html', userDetails=userDetails)
+        games = cur.fetchall()
+        return render_template('games.html', games=games)
 
 if __name__ == "__main__":
     app.run(debug=True)

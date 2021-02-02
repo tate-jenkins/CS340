@@ -75,3 +75,10 @@ ol, ul {
     width: 400px;
     margin: auto;
 }
+
+.table-wrapper {
+    position: relative;
+    padding: 1em 0em; 
+    width: 400px;
+    margin: auto;
+}
