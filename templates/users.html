@@ -35,4 +35,19 @@
 </div>
 <br>
 
+<br>
+<div id="table-wrapper">
+<table border = 1>
+    <legend>Users</legend>
+    <tr>
+        <th>Username</th>
+        <th>Balance</th> 
+    </tr>
+    {% for user in userDetails %}
+    <tr>
+        <td> {{ user[0] }} </td>
+        <td> {{ user[1] }} </td>
+    </tr>
+    {% endfor %}
+</div>
 {% endblock %}

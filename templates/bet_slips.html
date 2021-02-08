@@ -21,4 +21,28 @@
     </fieldset>
 </form>
 </div>
+
+<br>
+
+<div id="table-wrapper">
+<table border = 1>
+    <legend>Bet Slips</legend>
+    <tr>
+        <th>Game</th>
+        <th>slip_id</th>
+        <th>Bet Type</th> 
+        <th>Parlay</th> 
+        <th>Wager</th>
+        <th>Payout Status</th>
+    </tr>
+    {% for betSlip in betSlips %}
+        <tr>
+            <td> {{ betSlip[0] }} vs. {{ betSlip[1] }}</td> <!--- Game--->
+            <td> {{ betSlip[2] }} </td> <!--- slip_id --->
+            <td> {{ betSlip[3] }} </td> <!--- Bet Type--->
+            <td> {{ betSlip[4] }} </td> <!--- Parlay --->
+            <td> {{ betSlip[5] }} </td> <!--- Wager --->
+            <td> {{ betSlip[6] }} </td> <!--- Payout Status --->
+        </tr>
+    {% endfor %}
 {% endblock %}

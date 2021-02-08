@@ -39,27 +39,32 @@
     </fieldset>
 </form>
 </div>
+
 <br>
-<div id="table-wrapper">
-<table border = 1>
-    <legend>Games</legend>
-    <tr>
-        <th>Team A</th>
-        <th>Team A Odds</th>
-        <th>Team B</th>
-        <th>Team B Odds</th>
-        <th>Spread</th>
-        <th>Over / Under</th>
-    </tr>
-    {% for game in games %}
-    <tr>
-        <td> {{ game[0] }} </td>
-        <td> {{ game[1] }} </td>
-        <td> {{ game[2] }} </td>
-        <td> {{ game[3] }} </td>
-        <td> {{ game[4] }} </td>
-        <td> {{ game[5] }} </td>
-    </tr>
-    {% endfor %}
+{% for game in games %}
+    <div id="table-wrapper">
+    <table border = 1>
+        <legend>{{ game[0]}} vs. {{ game[2] }} (GameID: {{game[6]}})</legend>
+        <tr>
+            <th></th>
+            <th>Spread</th>
+            <th>Money Line</th>
+            <th>Over/Under</th> 
+        </tr>
+        <tr>
+            <td> {{ game[0] }} </td> <!--- Team A (away team)--->
+            <td> - {{ game[4] }} </td> <!--- Team A -Spread (spread is default for home team)--->
+            <td> {{ game[1] }} </td> <!--- Team A Moneyline to Win--->
+            <td> Over {{ game[5] }} </td> <!--- Over --->
+        </tr>
+        <tr>
+            <td> {{ game[2] }} </td> <!--- Team B (home team)--->
+            <td> {{ game[4] }} </td> <!--- Team B -Spread (spread is default for home team)--->
+            <td> {{ game[3] }} </td> <!--- Team B Moneyline to Win--->
+            <td> Under {{ game[5] }} </td> <!--- Under --->
+        </tr>
+    </table>
+{% endfor %}
 </div>
+
 {% endblock %}

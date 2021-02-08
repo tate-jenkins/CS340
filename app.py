@@ -35,7 +35,7 @@ def users():
         cur.close()
         return redirect('/')
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM Users")
+    resultValue = cur.execute("SELECT username, balance FROM Users")
     if resultValue > 0:
         userDetails = cur.fetchall()
         return render_template('users.html', userDetails=userDetails)
@@ -44,15 +44,17 @@ def users():
 @app.route('/bet_slips')
 def bet_slips():
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM Users")
+    resultValue = cur.execute("SELECT team_a, team_b, slip_id, bet_type, parlay_id, wager, payout_status \
+                                FROM Games \
+                                INNER JOIN Bet_slips ON Games.game_id = Bet_slips.game_id")
     if resultValue > 0:
-        userDetails = cur.fetchall()
-        return render_template('bet_slips.html', userDetails=userDetails)
+        betSlips = cur.fetchall()
+        return render_template('bet_slips.html', betSlips=betSlips)
 
 @app.route('/games')
 def games():
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT team_a, team_a_odds, team_b, team_b_odds, spread, over_under_line FROM Games")
+    resultValue = cur.execute("SELECT team_a, team_a_odds, team_b, team_b_odds, spread, over_under_line, game_id FROM Games")
     if resultValue > 0:
         games = cur.fetchall()
         return render_template('games.html', games=games)
