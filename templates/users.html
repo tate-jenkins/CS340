@@ -34,12 +34,30 @@
 </form>
 </div>
 <br>
+<div class="form-wrapper">
+<form method="POST" action="">
+    <fieldset>
+        <legend>Adjust Balance</legend>
+        <select name="user" id="user">
+            {% for user in userDetails %}
+                <option value="{{ user[0] }}">{{user[0]}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        Balance Adjustment Value<input type="text" name="balance_adjustment">
+        <input type="submit" class="button">
+    </fieldset>
+</form>
+</div>
+<br>
+
 
 <br>
 <div id="table-wrapper">
 <table border = 1>
     <legend>Users</legend>
     <tr>
+        <th>User ID</th>
         <th>Username</th>
         <th>Balance</th> 
     </tr>
@@ -47,6 +65,7 @@
     <tr>
         <td> {{ user[0] }} </td>
         <td> {{ user[1] }} </td>
+        <td> {{ user[2] }} </td>
     </tr>
     {% endfor %}
 </div>

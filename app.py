@@ -35,7 +35,7 @@ def users():
         cur.close()
         return redirect('/')
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT username, balance FROM Users")
+    resultValue = cur.execute("SELECT user_id, username, balance  FROM Users")
     if resultValue > 0:
         userDetails = cur.fetchall()
         return render_template('users.html', userDetails=userDetails)

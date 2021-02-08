@@ -82,3 +82,10 @@ ol, ul {
     width: 400px;
     margin: auto;
 }
+
+.text-wrapper {
+    position: relative;
+    padding: 1em 0em; 
+    width: 800px;
+    margin: auto;
+}

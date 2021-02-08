@@ -10,12 +10,17 @@
 <form method="POST" action="">
     <fieldset>
         <legend>Add Game</legend>
-        Team A <input type="text" name="team_a" />
+        Team A (away) <input type="text" name="team_a" />
         <br>
-        Team B <input type="text" name="team_b" />
+        Team B (home)<input type="text" name="team_b" />
         <br>
-        
-        Spread <input type="number" name="spread" />
+        Spread (enter value for home team, i.e. home team is 3 point underdogs, enter -3<input type="number" name="spread" />
+        <br>
+        Team A odds <input type="number" name="spread" />
+        <br>
+        Team B odds <input type="number" name="spread" />
+        <br>
+        Over/Under <input type="number" name="spread" />
         <br>
         <input type="submit" class="button">
     </fieldset>
@@ -25,15 +30,15 @@
 <div class="form-wrapper">
 <form method="POST" action="">
     <fieldset>
-        <legend>Update Game</legend>
+        <legend>Update Game Result</legend>
         <label for="game">Game </label>
         <select name="game" id="game">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
+            {% for game in games %}
+                <option value="{{ game[6] }}">{{ game[6] }}</option>
+            {% endfor %}
         </select>
         <br>
-        Spread <input type="number" name="spread" />
+        Result (Put Team B (home team) margin. Example: Home team wins by 3, enter 3) <input type="number" name="margin" />
         <br>
         <input type="submit" class="button">
     </fieldset>
