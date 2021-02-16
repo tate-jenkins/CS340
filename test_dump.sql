@@ -9,12 +9,12 @@ SET FOREIGN_KEY_CHECKS = 1;
 --
 -- Table structure for table `Users`
 --
-CREATE TABLE `Users` (
-`user_id` int(11) NOT NULL AUTO_INCREMENT,
-`username` varchar(255) NOT NULL,
-`balance` int(11) DEFAULT NULL,
-PRIMARY KEY (`user_id`),
-UNIQUE KEY `username` (`username`)
+CREATE TABLE Users (
+user_id int NOT NULL AUTO_INCREMENT,
+username varchar(255) NOT NULL, 
+balance numeric(7,2) DEFAULT NULL,
+PRIMARY KEY (user_id),
+UNIQUE KEY (username)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -28,15 +28,26 @@ INSERT INTO `Users` (`username`) VALUES
 --
 -- Table structure for table `Bet_slips`
 --
-CREATE TABLE `Bet_slips` (
-`slip_id` int(11) NOT NULL AUTO_INCREMENT,
-`wager` decimal(4,2) NOT NULL,
-`bet_type` varchar(255) NOT NULL,
-`bet_won` boolean DEFAULT NULL,
-`payout_status` boolean DEFAULT NULL,
-`game_id` int(11) NOT NULL,
-`parlay_id` int(11) DEFAULT NULL,
-PRIMARY KEY (`slip_id`)
+CREATE TABLE Bet_slips (
+slip_id int NOT NULL AUTO_INCREMENT,
+wager numeric(7,2) NOT NULL,
+bet_type varchar(255) NOT NULL,
+bet_won boolean DEFAULT NULL,
+payout_status boolean DEFAULT NULL,
+game_id int(11) NOT NULL,
+parlay_id int(11) DEFAULT NULL,
+PRIMARY KEY (slip_id),
+FOREIGN KEY games2bet_slips (game_id)
+REFERENCES Games
+	ON UPDATE CASCADE
+	ON DELETE CASCADE 
+CHECK(Wager>=0),
+CONSTRAINT CHK_bet_type CHECK(UPPER(bet_type) = 'TEAM_A_MONEY_LINE' OR 
+	UPPER(bet_type) = 'TEAM_B_MONEY_LINE' OR
+	UPPER(bet_type) = 'TEAM_A_SPREAD' OR
+	UPPER(bet_type) = 'TEAM_B_SPREAD' OR
+	UPPER(bet_type) = 'OVER' OR
+	UPPER(bet_type) = 'UNDER')
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -44,8 +55,8 @@ PRIMARY KEY (`slip_id`)
 --
 
 INSERT INTO `Bet_slips` (`wager`,`bet_type`,`game_id`) VALUES
-('10.00', 'spreadA',1),
-('10.00', 'over',1);
+('10.00', 'TEAM_A_SPREAD',1),
+('10.00', 'OVER',1);
 
 --
 -- Table structure for table `Parlay`
