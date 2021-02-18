@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<br>
+<div id="table-wrapper">
+<table border = 1>
+    <legend>Users Bet Slips</legend>
+    <tr>
+        <th>User ID</th>
+        <th>Slip ID</th>
+    </tr>
+    {% for usersBetSlip in usersBetSlips %}
+        <tr>
+            <td> {{ usersBetSlip[0] }} </td> <!--- user_id--->
+            <td> {{ usersBetSlip[1] }} </td> <!--- slip_id --->
+        </tr>
+    {% endfor %}
+{% endblock %}

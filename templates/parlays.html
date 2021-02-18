@@ -11,9 +11,19 @@
 <form method="POST" action="">
     <fieldset>
         <legend>Parlay Bets</legend>
-        Bet Slip 1 <input type="number" name="parlay_1" />
+        <label for="parlay_1">Bet Slip 1 </label>
+        <select name="parlay_1" id="parlay_1">
+            {% for betSlip in betSlips %}
+                <option value="{{ betSlip[0] }}">{{ betSlip[0] }}</option>
+            {% endfor %}
+        </select>
         <br>
-        Bet Slip 2 <input type="number" name="parlay_2" />
+        <label for="parlay_2">Bet Slip 2 </label>
+        <select name="parlay_2" id="parlay_2">
+            {% for betSlip in betSlips %}
+                <option value="{{ betSlip[0] }}">{{ betSlip[0] }}</option>
+            {% endfor %}
+        </select>
         <br>
         <input type="submit" class="button">
     </fieldset>

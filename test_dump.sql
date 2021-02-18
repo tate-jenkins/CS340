@@ -69,6 +69,7 @@ REFERENCES Games(`game_id`)
     ON UPDATE CASCADE 
     ON DELETE CASCADE,
     CHECK(Wager>=0),
+FOREIGN KEY abc(`slip_id`) REFERENCES Users_bet_slips(`slip_id`) ON UPDATE CASCADE ON DELETE CASCADE,
 CONSTRAINT CHK_bet_type CHECK(UPPER(bet_type) = 'TEAM_A_MONEY_LINE' OR 
 	UPPER(bet_type) = 'TEAM_B_MONEY_LINE' OR
 	UPPER(bet_type) = 'TEAM_A_SPREAD' OR
@@ -116,17 +117,15 @@ FOREIGN KEY fk_parlay(`parlay_id`) REFERENCES Parlay(`parlay_id`) ON UPDATE CASC
 -- Dumping data for table `Bet_slips`
 --
 
-INSERT INTO `Bet_slips` (`wager`,`bet_type`,`game_id`) VALUES
-('10.00', 'TEAM_A_SPREAD',1),
-('10.00', 'TEAM_B_SPREAD',2),
-('10.00', 'OVER',1);
+INSERT INTO `Bet_slips` (`wager`,`bet_type`,`game_id`, `parlay_id`) VALUES
+('10.00', 'TEAM_A_SPREAD',1, 1),
+('10.00', 'TEAM_B_SPREAD',2, 1),
+('10.00', 'OVER',1, NULL);
 --
 -- Dumping data for table `Users_bet_slips`
 --
 INSERT INTO `Users_bet_slips` (`slip_id`, `user_id`) VALUES
-(1,1),
-(2,1),
-(3,2);
+(33,22);
 --
 -- Dumping data for table `Parlay`
 --
@@ -135,5 +134,4 @@ INSERT INTO `Parlay` (`parlay_1`, `parlay_2`) VALUES
 (2,3);
 
 INSERT INTO `Parlay_bet_slips` (`slip_id`, `parlay_id`) VALUES
-(1,1),
-(1,2);
+(111,222);
