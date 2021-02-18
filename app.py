@@ -62,12 +62,13 @@ def bet_slips():
     if request.method == 'POST':
         # fetch form data
         betSlips = request.form
-        if betSlips.get('wager', False):
+        if betSlips.get('wager', False) and betSlips.get('bet_type', False) and betSlips.get('game_id', False):
             wager = betSlips['wager']
             bet_type = betSlips['bet_type']
             game_id = betSlips['game_id']
+            user_id = betSlips['user_id']
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO Bet_slips(wager, bet_type, game_id) VALUES(%s, %s, %s)", (wager, bet_type, game_id))
+            cur.execute("INSERT INTO Bet_slips(wager, bet_type, game_id, user_id) VALUES(%s, %s, %s, %s)", (wager, bet_type, game_id, user_id))
             mysql.connection.commit()
             cur.close()
             return redirect('/bet_slips')
@@ -79,12 +80,19 @@ def bet_slips():
         cur.close()
 
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT slip_id, wager, bet_type, bet_won, payout_status, team_a, team_b, parlay_id, Bet_slips.game_id \
+    usersValue = cur.execute("SELECT user_id, username FROM Users")
+    if usersValue > 0:
+        users = cur.fetchall()
+        cur.close()
+
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT slip_id, wager, bet_type, bet_won, payout_status, team_a, team_b, parlay_id, Bet_slips.game_id, Bet_slips.user_id \
                                 FROM Bet_slips \
-                                INNER JOIN Games ON Games.game_id = Bet_slips.game_id")
+                                INNER JOIN Games ON Games.game_id = Bet_slips.game_id \
+                                INNER JOIN Users ON Users.user_id = Bet_slips.user_id")
     if resultValue > 0:
         betSlips = cur.fetchall()
-        return render_template('bet_slips.html', games=games, betSlips=betSlips)
+        return render_template('bet_slips.html', users=users, games=games, betSlips=betSlips)
 
 
 @app.route('/users_bet_slips', methods=['GET','POST'])

@@ -63,13 +63,17 @@ CREATE TABLE `Bet_slips` (
 `payout_status` boolean DEFAULT NULL,
 `game_id` int(11) NOT NULL,
 `parlay_id` int(11) DEFAULT NULL,
+`user_id` int NOT NULL,
 PRIMARY KEY (`slip_id`),
 FOREIGN KEY games2bet_slips(`game_id`) 
 REFERENCES Games(`game_id`) 
     ON UPDATE CASCADE 
     ON DELETE CASCADE,
     CHECK(Wager>=0),
-FOREIGN KEY abc(`slip_id`) REFERENCES Users_bet_slips(`slip_id`) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY users2bet_slips(`user_id`) 
+REFERENCES Users(`user_id`) 
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE,
 CONSTRAINT CHK_bet_type CHECK(UPPER(bet_type) = 'TEAM_A_MONEY_LINE' OR 
 	UPPER(bet_type) = 'TEAM_B_MONEY_LINE' OR
 	UPPER(bet_type) = 'TEAM_A_SPREAD' OR
@@ -117,10 +121,10 @@ FOREIGN KEY fk_parlay(`parlay_id`) REFERENCES Parlay(`parlay_id`) ON UPDATE CASC
 -- Dumping data for table `Bet_slips`
 --
 
-INSERT INTO `Bet_slips` (`wager`,`bet_type`,`game_id`, `parlay_id`) VALUES
-('10.00', 'TEAM_A_SPREAD',1, 1),
-('10.00', 'TEAM_B_SPREAD',2, 1),
-('10.00', 'OVER',1, NULL);
+INSERT INTO `Bet_slips` (`wager`,`bet_type`,`game_id`, `parlay_id`, `user_id`) VALUES
+('10.00', 'TEAM_A_SPREAD',1, 1, 1),
+('10.00', 'TEAM_B_SPREAD',2, 1, 1),
+('10.00', 'OVER',1, NULL, 2);
 --
 -- Dumping data for table `Users_bet_slips`
 --

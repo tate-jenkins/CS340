@@ -11,8 +11,15 @@
 <form method="POST" action="">
     <fieldset>
         <legend>Add Bet Slip</legend>
-        <label for="game">Game </label>
-        <select name="game" id="game">
+        <label for="user_id">User </label>
+        <select name="user_id" id="user_id">
+            {% for user in users %}
+                <option value="{{ user[0] }}">{{user[1]}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="game_id">Game </label>
+        <select name="game_id" id="game_id">
             {% for game in games %}
                 <option value="{{ game[0] }}">{{ game[1] }} vs. {{ game[2] }}</option>
             {% endfor %}
@@ -44,6 +51,7 @@
     <tr>
         <th>Game</th>
         <th>Slip ID</th>
+        <th>User ID</th>
         <th>Wager</th>
         <th>Bet Type</th> 
         <th>Bet Won</th> 
@@ -54,6 +62,7 @@
         <tr>
             <td> {{ betSlip[5] }} vs {{ betSlip[6] }} </td> <!--- Payout Status --->
             <td> {{ betSlip[0] }} </td> <!--- Game--->
+            <td> {{ betSlip[8] }} </td>
             <td> {{ betSlip[1] }} </td> <!--- slip_id --->
             <td> {{ betSlip[2] }} </td> <!--- Bet Type--->
             <td> {{ betSlip[3] }} </td> <!--- Parlay --->
