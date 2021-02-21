@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+
+<br>
+<div class="form-wrapper">
+<form method="POST" action="">
+    <fieldset>
+        <legend>Parlay Bets</legend>
+        <label for="parlay_1">Bet Slip 1 </label>
+        <select name="parlay_1" id="parlay_1">
+            {% for betSlip in betSlips %}
+                <option value="{{ betSlip[0] }}">{{ betSlip[0] }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="parlay_2">Bet Slip 2 </label>
+        <select name="parlay_2" id="parlay_2">
+            {% for betSlip in betSlips %}
+                <option value="{{ betSlip[0] }}">{{ betSlip[0] }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input type="submit" class="button">
+    </fieldset>
+</form>
+</div>
+
+
+<br>
+<div id="table-wrapper">
+<table border = 1>
+    <legend>Parlays</legend>
+    <tr>
+        <th>Parlay ID</th>
+        <th>Bet Slip 1</th>
+        <th>Bet Slip 2</th> 
+    </tr>
+    {% for parlay in parlays %}
+    <tr>
+        <td> {{ parlay[0] }} </td>
+        <td> {{ parlay[1] }} </td>
+        <td> {{ parlay[2] }} </td>
+    </tr>
+
+    {% endfor %}
+</table>
+</div>
+{% endblock %}
