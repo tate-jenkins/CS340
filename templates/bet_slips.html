@@ -11,33 +11,26 @@
 <form method="POST" action="">
     <fieldset>
         <legend>Add Bet Slip</legend>
-        <label for="user_id">User </label>
-        <select name="user_id" id="user_id">
-            {% for user in users %}
-                <option value="{{ user[0] }}">{{user[1]}}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label for="game_id">Game </label>
-        <select name="game_id" id="game_id">
-            {% for game in games %}
-                <option value="{{ game[0] }}">{{ game[1] }} vs. {{ game[2] }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label for="bet_type">Bet Type </label>
-        <select name="bet_type" id="bet_type">
-            <option value="TEAM_A_MONEY_LINE">Team A Money Line</option>
-            <option value="TEAM_B_MONEY_LINE">Team B Money Line</option>
-            <option value="TEAM_A_SPREAD">Team A Spread</option>
-            <option value="TEAM_B_SPREAD">Team B Spread</option>
-            <option value="OVER">Over</option>
-            <option value="UNDER">Under</option>
-        </select>
+        User <input type="text" name="user" />
         <br>
         Wager <input type="number" name="wager" />
         <br>
+        Bet Type <input type="text" name="bet_type" />
+        <br>
+        <input type="submit" class="button">
+    </fieldset>
+</form>
+</div>
 
+<br>
+<div class="form-wrapper">
+<form method="POST" action="">
+    <fieldset>
+        <legend>Parlay Bets</legend>
+        Bet Slip 1 <input type="number" name="parlay1" />
+        <br>
+        Bet Slip 2 <input type="number" name="parlay2" />
+        <br>
         <input type="submit" class="button">
     </fieldset>
 </form>
@@ -50,24 +43,20 @@
     <legend>Bet Slips</legend>
     <tr>
         <th>Game</th>
-        <th>Slip ID</th>
-        <th>User ID</th>
-        <th>Wager</th>
+        <th>slip_id</th>
         <th>Bet Type</th> 
-        <th>Bet Won</th> 
+        <th>Parlay</th> 
+        <th>Wager</th>
         <th>Payout Status</th>
-        <th>Parlay ID</th>
     </tr>
     {% for betSlip in betSlips %}
         <tr>
-            <td> {{ betSlip[5] }} vs {{ betSlip[6] }} </td> <!--- Payout Status --->
-            <td> {{ betSlip[0] }} </td> <!--- Game--->
-            <td> {{ betSlip[8] }} </td>
-            <td> {{ betSlip[1] }} </td> <!--- slip_id --->
-            <td> {{ betSlip[2] }} </td> <!--- Bet Type--->
-            <td> {{ betSlip[3] }} </td> <!--- Parlay --->
-            <td> {{ betSlip[4] }} </td> <!--- Wager --->
-            <td> {{ betSlip[7] }} </td> <!--- Payout Status --->
+            <td> {{ betSlip[0] }} vs. {{ betSlip[1] }}</td> <!--- Game--->
+            <td> {{ betSlip[2] }} </td> <!--- slip_id --->
+            <td> {{ betSlip[3] }} </td> <!--- Bet Type--->
+            <td> {{ betSlip[4] }} </td> <!--- Parlay --->
+            <td> {{ betSlip[5] }} </td> <!--- Wager --->
+            <td> {{ betSlip[6] }} </td> <!--- Payout Status --->
         </tr>
     {% endfor %}
 {% endblock %}

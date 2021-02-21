@@ -16,11 +16,11 @@
         <br>
         Spread (enter value for home team, i.e. home team is 3 point underdogs, enter -3<input type="number" name="spread" />
         <br>
-        Team A odds <input type="number" name="team_a_odds" />
+        Team A odds <input type="number" name="spread" />
         <br>
-        Team B odds <input type="number" name="team_b_odds" />
+        Team B odds <input type="number" name="spread" />
         <br>
-        Over/Under <input type="number" name="over_under_line" />
+        Over/Under <input type="number" name="spread" />
         <br>
         <input type="submit" class="button">
     </fieldset>
@@ -34,7 +34,7 @@
         <label for="game">Game </label>
         <select name="game" id="game">
             {% for game in games %}
-                <option value="{{ game[6] }}">{{ game[0]}} vs. {{ game[2] }}</option>
+                <option value="{{ game[6] }}">{{ game[6] }}</option>
             {% endfor %}
         </select>
         <br>
@@ -55,7 +55,6 @@
             <th>Spread</th>
             <th>Money Line</th>
             <th>Over/Under</th> 
-            <th>Margin</th>
         </tr>
         <tr>
             <td> {{ game[0] }} </td> <!--- Team A (away team)--->
@@ -68,7 +67,6 @@
             <td> {{ game[4] }} </td> <!--- Team B -Spread (spread is default for home team)--->
             <td> {{ game[3] }} </td> <!--- Team B Moneyline to Win--->
             <td> Under {{ game[5] }} </td> <!--- Under --->
-            <td>{{ game[7] }}</td>
         </tr>
     </table>
 {% endfor %}

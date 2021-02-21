@@ -23,10 +23,10 @@
 <form method="POST" action="">
     <fieldset>
         <legend>Delete User</legend>
-        <select name="username_delete" id="username_delete">
-            {% for user in userDetails %}
-                <option value="{{ user[1] }}">{{user[1]}}</option>
-            {% endfor %}
+        <select name="user" id="user">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
         </select>
         <br>
         <input type="submit" class="button">
@@ -38,13 +38,13 @@
 <form method="POST" action="">
     <fieldset>
         <legend>Adjust Balance</legend>
-        <select name="username_adjustment" id="username_adjustment">
+        <select name="user" id="user">
             {% for user in userDetails %}
-                <option value="{{ user[1] }}">{{user[1]}}</option>
+                <option value="{{ user[0] }}">{{user[0]}}</option>
             {% endfor %}
         </select>
         <br>
-        Balance Adjustment Value <input type="number" name="balance_adjustment">
+        Balance Adjustment Value<input type="text" name="balance_adjustment">
         <input type="submit" class="button">
     </fieldset>
 </form>
