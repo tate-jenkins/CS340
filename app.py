@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from flask_mysqldb import MySQL
 import yaml
 
 
 app = Flask(__name__)
+app.secret_key = "key"
 
 db = yaml.load(open('templates/db.yaml'))
 app.config['MYSQL_HOST'] = db['mysql_host']
@@ -94,6 +95,21 @@ def bet_slips():
         betSlips = cur.fetchall()
         return render_template('bet_slips.html', users=users, games=games, betSlips=betSlips)
 
+@app.route('/remove_bet_slip', methods=['POST'])
+def bet_slips_removal():
+    if request.method == 'POST':
+        removalSlip = request.form
+        cur = mysql.connection.cursor()
+        #Check if bet is parlayed
+        parlayValue = cur.execute("SELECT parlay_id FROM Parlay WHERE parlay_1 = %s or parlay_2 = %s",(removalSlip['slip_id'],removalSlip['slip_id']))
+        if parlayValue > 0:
+            parlayIDs = cur.fetchall()
+            message = "Parlays associated with this Bet Slip were also deleted"
+            flash(message)
+        #cur.execute("DELETE FROM Bet_slips WHERE slip_id = %s", (removalSlip['slip_id']))
+        #mysql.connection.commit()
+        cur.close()
+        return redirect('/bet_slips')
 
 @app.route('/users_bet_slips', methods=['GET','POST'])
 def users_bet_slips():
@@ -144,19 +160,20 @@ def games():
 
 @app.route('/parlays', methods=['GET', 'POST'])
 def parlays():
-    parlayDetails = request.form
-    if parlayDetails.get('parlay_1', False) and parlayDetails.get('parlay_2', False):
-        parlay_1 = parlayDetails['parlay_1']
-        parlay_2 = parlayDetails['parlay_2']
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO Parlay(parlay_1, parlay_2) VALUES(%s, %s)", (parlay_1, parlay_2))
-        mysql.connection.commit()
-        cur.execute("UPDATE Bet_slips SET Bet_slips.parlay_id = (SELECT parlay_id FROM Parlay WHERE parlay_1 = %s and parlay_2 = %s) WHERE slip_id = %s", (parlay_1, parlay_2, parlay_1))
-        mysql.connection.commit()
-        cur.execute("UPDATE Bet_slips SET Bet_slips.parlay_id = (SELECT parlay_id FROM Parlay WHERE parlay_1 = %s and parlay_2 = %s) WHERE slip_id = %s", (parlay_1, parlay_2, parlay_2))
-        mysql.connection.commit()
-        cur.close()
-        return redirect('/parlays')
+    if request.method == 'POST':
+        parlayDetails = request.form
+        if parlayDetails.get('parlay_1', False) and parlayDetails.get('parlay_2', False):
+            parlay_1 = parlayDetails['parlay_1']
+            parlay_2 = parlayDetails['parlay_2']
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO Parlay(parlay_1, parlay_2) VALUES(%s, %s)", (parlay_1, parlay_2))
+            mysql.connection.commit()
+            cur.execute("UPDATE Bet_slips SET Bet_slips.parlay_id = (SELECT parlay_id FROM Parlay WHERE parlay_1 = %s and parlay_2 = %s) WHERE slip_id = %s", (parlay_1, parlay_2, parlay_1))
+            mysql.connection.commit()
+            cur.execute("UPDATE Bet_slips SET Bet_slips.parlay_id = (SELECT parlay_id FROM Parlay WHERE parlay_1 = %s and parlay_2 = %s) WHERE slip_id = %s", (parlay_1, parlay_2, parlay_2))
+            mysql.connection.commit()
+            cur.close()
+            return redirect('/parlays')
 
     cur = mysql.connection.cursor()
     betSlipsValue = cur.execute("SELECT Bet_slips.slip_id FROM Bet_slips")
@@ -167,9 +184,15 @@ def parlays():
     cur = mysql.connection.cursor()
     resultValue = cur.execute("SELECT Parlay.parlay_id, Parlay.parlay_1, Parlay.parlay_2, Bet_slips.slip_id FROM Parlay \
                                 INNER JOIN Bet_slips ON Bet_slips.parlay_id = Parlay.parlay_id")
+    print(resultValue)
     if resultValue > 0:
         parlays = cur.fetchall()
+        print(parlays)
         return render_template('parlays.html', betSlips=betSlips, parlays=parlays)
+    elif betSlipsValue > 0:
+        return render_template('parlays.html', betSlips=betSlips)
+    else: 
+        return render_template('parlays.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

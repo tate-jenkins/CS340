@@ -6,6 +6,11 @@
 
 {% block body %}
 
+{% for message in get_flashed_messages() %}
+  <div class="notice" style= "background-color: yellow;
+    color: black;">Note: {{ message }}</div>
+{% endfor %}
+
 <br>
 <div class="form-wrapper">
 <form method="POST" action="">
@@ -38,6 +43,23 @@
         Wager <input type="number" name="wager" />
         <br>
 
+        <input type="submit" class="button">
+    </fieldset>
+</form>
+</div>
+
+<br>
+
+<div class="form-wrapper">
+<form method="POST" action="/remove_bet_slip">
+    <fieldset>
+        <legend>Remove Bet Slip</legend>
+        <label for="slip_id">Slip ID </label>
+        <select name="slip_id" id="slip_id">
+            {% for betSlip in betSlips %}
+                <option value="{{ betSlip[0] }}">{{betSlip[0]}}</option>
+            {% endfor %}
+        </select>
         <input type="submit" class="button">
     </fieldset>
 </form>

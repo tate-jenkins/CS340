@@ -89,3 +89,8 @@ ol, ul {
     width: 800px;
     margin: auto;
 }
+
+.notice{
+    background-color: yellow;
+    color: black;
+}
