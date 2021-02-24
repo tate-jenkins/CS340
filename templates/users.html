@@ -5,6 +5,8 @@
 
 
 {% block body %}
+<div class="row">
+<div class = "column">
 <br>
 <div class="form-wrapper">
 <form method="POST" action="">
@@ -49,10 +51,9 @@
     </fieldset>
 </form>
 </div>
-<br>
+</div>
 
-
-<br>
+<div class="column">
 <div id="table-wrapper">
 <table border = 1>
     <legend>Users</legend>
@@ -68,5 +69,7 @@
         <td> {{ user[2] }} </td>
     </tr>
     {% endfor %}
+</div>
+</div>
 </div>
 {% endblock %}

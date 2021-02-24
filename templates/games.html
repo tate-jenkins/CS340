@@ -5,7 +5,8 @@
 
 {% block body %}
 
-<br>
+<div class="row">
+    <div class="column">
 <div class="form-wrapper">
 <form method="POST" action="">
     <fieldset>
@@ -43,9 +44,9 @@
         <input type="submit" class="button">
     </fieldset>
 </form>
-</div>
+</div></div>
 
-<br>
+<div class = "column">
 {% for game in games %}
     <div id="table-wrapper">
     <table border = 1>
@@ -73,5 +74,5 @@
     </table>
 {% endfor %}
 </div>
-
+</div></div>
 {% endblock %}

@@ -11,7 +11,8 @@
     color: black;">Note: {{ message }}</div>
 {% endfor %}
 
-<br>
+<div class="row">
+    <div class="column">
 <div class="form-wrapper">
 <form method="POST" action="">
     <fieldset>
@@ -48,7 +49,8 @@
 </form>
 </div>
 
-<br>
+
+
 
 <div class="form-wrapper">
 <form method="POST" action="/remove_bet_slip">
@@ -64,9 +66,9 @@
     </fieldset>
 </form>
 </div>
-
+</div>
 <br>
-
+<div class = "column">
 <div id="table-wrapper">
 <table border = 1>
     <legend>Bet Slips</legend>
@@ -78,18 +80,20 @@
         <th>Bet Type</th> 
         <th>Bet Won</th> 
         <th>Payout Status</th>
-        <th>Parlay ID</th>
+        
     </tr>
     {% for betSlip in betSlips %}
         <tr>
-            <td> {{ betSlip[5] }} vs {{ betSlip[6] }} </td> <!--- Payout Status --->
-            <td> {{ betSlip[0] }} </td> <!--- Game--->
-            <td> {{ betSlip[8] }} </td>
-            <td> {{ betSlip[1] }} </td> <!--- slip_id --->
-            <td> {{ betSlip[2] }} </td> <!--- Bet Type--->
-            <td> {{ betSlip[3] }} </td> <!--- Parlay --->
-            <td> {{ betSlip[4] }} </td> <!--- Wager --->
-            <td> {{ betSlip[7] }} </td> <!--- Payout Status --->
+            <td> {{ betSlip[5] }} vs {{ betSlip[6] }} </td> <!--- game --->
+            <td> {{ betSlip[0] }} </td> <!--- slip_id--->
+            <td> {{ betSlip[7] }} </td> <!--- user_id --->
+            <td> {{ betSlip[1] }} </td> <!--- wager --->
+            <td> {{ betSlip[2] }} </td> <!--- bet_type --->
+            <td> {{ betSlip[3] }} </td> <!--- bet_won --->
+            <td> {{ betSlip[4] }} </td> <!--- payout_Status --->
+            <!--- <td> {{ betSlip[5] }} </td>  parlay_id --->
         </tr>
     {% endfor %}
+</div>
+</div>
 {% endblock %}

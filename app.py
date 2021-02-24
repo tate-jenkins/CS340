@@ -63,34 +63,39 @@ def bet_slips():
     if request.method == 'POST':
         # fetch form data
         betSlips = request.form
-        if betSlips.get('wager', False) and betSlips.get('bet_type', False) and betSlips.get('game_id', False):
+        if betSlips.get('wager', False) and betSlips.get('bet_type', False) and betSlips.get('game_id', False) and betSlips.get('user_id', False):
             wager = betSlips['wager']
             bet_type = betSlips['bet_type']
             game_id = betSlips['game_id']
             user_id = betSlips['user_id']
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO Bet_slips(wager, bet_type, game_id, user_id) VALUES(%s, %s, %s, %s)", (wager, bet_type, game_id, user_id))
+            cur.execute("INSERT INTO Bet_slips(wager, bet_type, game_id) VALUES(%s, %s, %s)", (wager, bet_type, game_id))
             mysql.connection.commit()
+            cur.execute("INSERT INTO Users_bet_slips (user_id, slip_id) VALUES (%s, (SELECT slip_id FROM Bet_slips ORDER BY slip_id DESC LIMIT 1))", (user_id))
+            mysql.connection.commit()
+            
             cur.close()
             return redirect('/bet_slips')
 
     cur = mysql.connection.cursor()
     gamesValue = cur.execute("SELECT game_id, team_a, team_b FROM Games")
+    games=None
     if gamesValue > 0:
         games = cur.fetchall()
         cur.close()
 
     cur = mysql.connection.cursor()
     usersValue = cur.execute("SELECT user_id, username FROM Users")
+    users=None
     if usersValue > 0:
         users = cur.fetchall()
         cur.close()
 
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT slip_id, wager, bet_type, bet_won, payout_status, team_a, team_b, parlay_id, Bet_slips.game_id, Bet_slips.user_id \
+    resultValue = cur.execute("SELECT Bet_slips.slip_id, wager, bet_type, bet_won, payout_status, team_a, team_b, Users_bet_slips.user_id \
                                 FROM Bet_slips \
                                 INNER JOIN Games ON Games.game_id = Bet_slips.game_id \
-                                INNER JOIN Users ON Users.user_id = Bet_slips.user_id")
+                                INNER JOIN Users_bet_slips ON Users_bet_slips.slip_id = Bet_slips.slip_id")
     if resultValue > 0:
         betSlips = cur.fetchall()
         return render_template('bet_slips.html', users=users, games=games, betSlips=betSlips)
@@ -101,13 +106,17 @@ def bet_slips_removal():
         removalSlip = request.form
         cur = mysql.connection.cursor()
         #Check if bet is parlayed
+        parlayValue = None
         parlayValue = cur.execute("SELECT parlay_id FROM Parlay WHERE parlay_1 = %s or parlay_2 = %s",(removalSlip['slip_id'],removalSlip['slip_id']))
+        mysql.connection.commit()
         if parlayValue > 0:
             parlayIDs = cur.fetchall()
+            cur.execute("DELETE * FROM Parlay WHERE parlay_1 = %s or parlay_2 = %s",(removalSlip['slip_id'],removalSlip['slip_id']))
+            mysql.connection.commit()
             message = "Parlays associated with this Bet Slip were also deleted"
             flash(message)
-        #cur.execute("DELETE FROM Bet_slips WHERE slip_id = %s", (removalSlip['slip_id']))
-        #mysql.connection.commit()
+        cur.execute("DELETE FROM Bet_slips WHERE slip_id = %s", (removalSlip['slip_id']))
+        mysql.connection.commit()
         cur.close()
         return redirect('/bet_slips')
 
@@ -166,11 +175,11 @@ def parlays():
             parlay_1 = parlayDetails['parlay_1']
             parlay_2 = parlayDetails['parlay_2']
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO Parlay(parlay_1, parlay_2) VALUES(%s, %s)", (parlay_1, parlay_2))
+            cur.execute("INSERT INTO Parlay(payout_status, user_id) VALUES(NULL, (SELECT user_id FROM Users_bet_slips WHERE slip_id = %s LIMIT 1))", (parlay_1))
             mysql.connection.commit()
-            cur.execute("UPDATE Bet_slips SET Bet_slips.parlay_id = (SELECT parlay_id FROM Parlay WHERE parlay_1 = %s and parlay_2 = %s) WHERE slip_id = %s", (parlay_1, parlay_2, parlay_1))
+            cur.execute("INSERT INTO Parlay_bet_slips(slip_id, parlay_id) VALUES(%s, (SELECT parlay_id FROM Parlay ORDER BY parlay_id DESC LIMIT 1))", (parlay_1))
             mysql.connection.commit()
-            cur.execute("UPDATE Bet_slips SET Bet_slips.parlay_id = (SELECT parlay_id FROM Parlay WHERE parlay_1 = %s and parlay_2 = %s) WHERE slip_id = %s", (parlay_1, parlay_2, parlay_2))
+            cur.execute("INSERT INTO Parlay_bet_slips(slip_id, parlay_id) VALUES(%s, (SELECT parlay_id FROM Parlay ORDER BY parlay_id DESC LIMIT 1))", (parlay_2))
             mysql.connection.commit()
             cur.close()
             return redirect('/parlays')
@@ -182,11 +191,11 @@ def parlays():
         cur.close()
 
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT Parlay.parlay_id, Parlay.parlay_1, Parlay.parlay_2, Bet_slips.slip_id FROM Parlay \
-                                INNER JOIN Bet_slips ON Bet_slips.parlay_id = Parlay.parlay_id")
+    resultValue = cur.execute("SELECT * FROM Parlay")
     print(resultValue)
     if resultValue > 0:
         parlays = cur.fetchall()
+        cur.close()
         print(parlays)
         return render_template('parlays.html', betSlips=betSlips, parlays=parlays)
     elif betSlipsValue > 0:

@@ -55,6 +55,15 @@ ol, ul {
     color:black;
 }
 
+.row {
+    display: flex;
+    padding: 0% 10%;
+}
+
+.column {
+    flex: 50%;
+    padding: 10px;
+}
 
 #header
 {
