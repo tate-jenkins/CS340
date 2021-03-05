@@ -55,11 +55,11 @@
 <div class="form-wrapper">
 <form method="POST" action="/remove_bet_slip">
     <fieldset>
-        <legend>Remove Bet Slip</legend>
-        <label for="slip_id">Slip ID </label>
-        <select name="slip_id" id="slip_id">
+        <legend>Remove User Bet</legend>
+        <label for="slip_id_user_id">Slip ID, User ID </label>
+        <select name="slip_id_user_id" id="slip_id_user_id">
             {% for betSlip in betSlips %}
-                <option value="{{ betSlip[0] }}">{{betSlip[0]}}</option>
+                <option value="{{ betSlip[0] }},{{ betSlip[7] }}">{{betSlip[0]}},{{betSlip[7]}}</option>
             {% endfor %}
         </select>
         <input type="submit" class="button">

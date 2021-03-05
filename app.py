@@ -69,11 +69,19 @@ def bet_slips():
             game_id = betSlips['game_id']
             user_id = betSlips['user_id']
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO Bet_slips(wager, bet_type, game_id) VALUES(%s, %s, %s)", (wager, bet_type, game_id))
+            #check if bet_slip exists or must be added
+            resultValue = cur.execute("SELECT slip_id FROM Bet_slips WHERE wager = %s AND bet_type = %s AND game_id = %s", (wager, bet_type, game_id))
             mysql.connection.commit()
-            cur.execute("INSERT INTO Users_bet_slips (user_id, slip_id) VALUES (%s, (SELECT slip_id FROM Bet_slips ORDER BY slip_id DESC LIMIT 1))", (user_id))
-            mysql.connection.commit()
-            
+            if resultValue > 0:
+                slip = cur.fetchall()
+                cur.execute("INSERT INTO Users_bet_slips (user_id, slip_id) VALUES (%s, %s)", (user_id,slip))
+                mysql.connection.commit()
+            else:
+                cur.execute("INSERT INTO Bet_slips(wager, bet_type, game_id) VALUES(%s, %s, %s)", (wager, bet_type, game_id))
+                mysql.connection.commit()
+                cur.execute("INSERT INTO Users_bet_slips (user_id, slip_id) VALUES (%s, (SELECT slip_id FROM Bet_slips \
+                    WHERE wager = %s AND bet_type = %s AND game_id = %s))", (user_id,wager, bet_type, game_id))
+                mysql.connection.commit()
             cur.close()
             return redirect('/bet_slips')
 
@@ -103,21 +111,49 @@ def bet_slips():
 @app.route('/remove_bet_slip', methods=['POST'])
 def bet_slips_removal():
     if request.method == 'POST':
-        removalSlip = request.form
+        removalSlip = request.form['slip_id_user_id']
+        #print(type(removalSlip))
+        list = [int(x) for x in removalSlip.split(",")]
+        #print(list)
+        slip_id = list[0]
+        #print(slip_id)
+        user_id = list[1]
+        #print(user_id)
         cur = mysql.connection.cursor()
         #Check if bet is parlayed
         parlayValue = None
-        parlayValue = cur.execute("SELECT parlay_id FROM Parlay WHERE parlay_1 = %s or parlay_2 = %s",(removalSlip['slip_id'],removalSlip['slip_id']))
+        parlayValue = cur.execute("SELECT Parlay.parlay_id FROM Parlay \
+            INNER JOIN Parlay_bet_slips ON Parlay.parlay_id = Parlay_bet_slips.parlay_id WHERE Parlay.user_id = %s \
+            AND Parlay_bet_slips.slip_id = %s",(slip_id, user_id))
         mysql.connection.commit()
+        # print(parlayValue)
+        # print(slip_id, user_id)
         if parlayValue > 0:
             parlayIDs = cur.fetchall()
-            cur.execute("DELETE * FROM Parlay WHERE parlay_1 = %s or parlay_2 = %s",(removalSlip['slip_id'],removalSlip['slip_id']))
-            mysql.connection.commit()
+            #print(parlayIDs)
+            for parlayID in parlayIDs:
+                print(parlayID[0])
+                #cur.execute("DELETE * FROM Parlay WHERE parlay_id = %s",[parlayID])
+                #mysql.connection.commit()
             message = "Parlays associated with this Bet Slip were also deleted"
             flash(message)
-        cur.execute("DELETE FROM Bet_slips WHERE slip_id = %s", (removalSlip['slip_id']))
-        mysql.connection.commit()
+        #check if bet slip is associated with multiple bets
+        cur = mysql.connection.cursor()
+        resultValue = cur.execute("SELECT COUNT(user_id) FROM Users_bet_slips WHERE slip_id = %s", [slip_id])
+        if resultValue > 0:
+            slip_count = cur.fetchall()
+            slip_count = slip_count[0][0]
+            # if multiple bets associated with bet_slip, deleted only entry in Users_bet_slips
+            if slip_count > 1:
+                cur.execute("DELETE FROM Users_bet_slips WHERE slip_id = %s AND user_id = %s", (slip_id, user_id))
+                mysql.connection.commit()
+            #if only one bet associated with a bet_slip, delete bet_slip (users_bet_slips will delete on cascade)
+            else:
+
+                cur.execute("DELETE FROM Bet_slips WHERE slip_id = %s", [slip_id])
+                mysql.connection.commit()
         cur.close()
+
         return redirect('/bet_slips')
 
 @app.route('/users_bet_slips', methods=['GET','POST'])
