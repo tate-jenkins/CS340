@@ -29,7 +29,23 @@
         <input type="submit" class="button">
     </fieldset>
 </form>
-</div></div>
+</div>
+<div class="form-wrapper">
+    <form method="POST" action="">
+        <fieldset>
+            <legend>Delete Parlay</legend>
+            <label for="parlay_delete">Parlay ID</label>
+            <select name="parlay_delete" id="parlay_delete">
+                {% for parlay in parlays %}
+                    <option value="{{ parlay[0] }}">{{parlay[0]}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <input type="submit" class="button">
+        </fieldset>
+    </form>
+    </div>
+</div>
 
 <div class="column">
 
