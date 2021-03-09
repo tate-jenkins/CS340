@@ -56,6 +56,8 @@ def users():
     if resultValue > 0:
         userDetails = cur.fetchall()
         return render_template('users.html', userDetails=userDetails)
+    else:
+        return render_template('users.html')
 
 
 @app.route('/bet_slips', methods=['GET','POST'])
@@ -107,6 +109,8 @@ def bet_slips():
     if resultValue > 0:
         betSlips = cur.fetchall()
         return render_template('bet_slips.html', users=users, games=games, betSlips=betSlips)
+    else:
+        return render_template('bet_slips.html', users=users, games=games)
 
 @app.route('/remove_bet_slip', methods=['POST'])
 def bet_slips_removal():
@@ -163,6 +167,8 @@ def users_bet_slips():
     if resultValue > 0:
         usersBetSlips = cur.fetchall()
         return render_template('users_bet_slips.html', usersBetSlips=usersBetSlips)
+    else:
+        return render_template('users_bet_slips.html')
 
 @app.route('/parlays_bet_slips', methods=['GET','POST'])
 def parlays_bet_slips():
@@ -171,6 +177,8 @@ def parlays_bet_slips():
     if resultValue > 0:
         parlaysBetSlips = cur.fetchall()
         return render_template('parlays_bet_slips.html', parlaysBetSlips=parlaysBetSlips)
+    else:
+        return render_template('parlays_bet_slips.html')
 
 @app.route('/games', methods=['GET','POST'])
 def games():
@@ -216,6 +224,15 @@ def parlays():
             cur.execute("INSERT INTO Parlay_bet_slips(slip_id, parlay_id) VALUES(%s, (SELECT parlay_id FROM Parlay ORDER BY parlay_id DESC LIMIT 1))", (parlay_1))
             mysql.connection.commit()
             cur.execute("INSERT INTO Parlay_bet_slips(slip_id, parlay_id) VALUES(%s, (SELECT parlay_id FROM Parlay ORDER BY parlay_id DESC LIMIT 1))", (parlay_2))
+            mysql.connection.commit()
+            cur.close()
+            return redirect('/parlays')
+        elif parlayDetails.get('parlay_delete', False):
+            parlay_delete = parlayDetails['parlay_delete']
+            cur = mysql.connection.cursor()
+            cur.execute("DELETE FROM Parlay_bet_slips WHERE parlay_id = %s", (parlay_delete))
+            mysql.connection.commit()
+            cur.execute("DELETE FROM Parlay WHERE parlay_id = %s", (parlay_delete))
             mysql.connection.commit()
             cur.close()
             return redirect('/parlays')
