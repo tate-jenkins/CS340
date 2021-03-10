@@ -112,6 +112,40 @@ def bet_slips():
     else:
         return render_template('bet_slips.html', users=users, games=games)
 
+@app.route('/filter_bet_slips', methods=['GET','POST'])
+def filter_bet_slips():
+    if request.method == 'POST':
+        cur = mysql.connection.cursor()
+        gamesValue = cur.execute("SELECT game_id, team_a, team_b FROM Games")
+        games = None
+        if gamesValue > 0:
+            games = cur.fetchall()
+            cur.close()
+
+        cur = mysql.connection.cursor()
+        usersValue = cur.execute("SELECT user_id, username FROM Users")
+        users = None
+        if usersValue > 0:
+            users = cur.fetchall()
+            cur.close()
+        betSlips = request.form
+        if betSlips.get('game_id', False):
+            game_id = betSlips['game_id']
+            cur = mysql.connection.cursor()
+            resultValue = cur.execute("SELECT Bet_slips.slip_id, wager, bet_type, bet_won, payout_status, team_a, team_b, Users_bet_slips.user_id \
+                                FROM Bet_slips \
+                                INNER JOIN Games ON Games.game_id = Bet_slips.game_id \
+                                INNER JOIN Users_bet_slips ON Users_bet_slips.slip_id = Bet_slips.slip_id \
+                                WHERE Games.game_id = %s", (game_id))
+            mysql.connection.commit()
+            if resultValue > 0:
+                betSlips = cur.fetchall()
+                return render_template('bet_slips.html', users=users, games=games, betSlips=betSlips)
+            else:
+                 return render_template('bet_slips.html', users=users, games=games)
+        else:
+            return render_template('bet_slips.html', users=users, games=games)
+
 @app.route('/remove_bet_slip', methods=['POST'])
 def bet_slips_removal():
     if request.method == 'POST':

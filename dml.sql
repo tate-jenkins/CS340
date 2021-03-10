@@ -9,9 +9,16 @@ SELECT user_id, username, balance FROM Users
 -- inserting new bet slips
 INSERT INTO Bet_slips(wager, bet_type, game_id) VALUES(wager, bet_type, game_id)
 -- selecting bet slips for html table
-SELECT team_a, team_b, slip_id, bet_type, parlay_id, wager, payout_status \
-                                FROM Games \
-                                INNER JOIN Bet_slips ON Games.game_id = Bet_slips.game_id
+SELECT Bet_slips.slip_id, wager, bet_type, bet_won, payout_status, team_a, team_b, Users_bet_slips.user_id \
+                                FROM Bet_slips \
+                                INNER JOIN Games ON Games.game_id = Bet_slips.game_id \
+                                INNER JOIN Users_bet_slips ON Users_bet_slips.slip_id = Bet_slips.slip_id
+-- filtering bet slips for html table
+SELECT Bet_slips.slip_id, wager, bet_type, bet_won, payout_status, team_a, team_b, Users_bet_slips.user_id \
+                                FROM Bet_slips \
+                                INNER JOIN Games ON Games.game_id = Bet_slips.game_id \
+                                INNER JOIN Users_bet_slips ON Users_bet_slips.slip_id = Bet_slips.slip_id \
+                                WHERE Games.game_id = :game_id
 -- inserting new games
 INSERT INTO Games(team_a, team_a_odds, team_b, team_b_odds, spread, over_under_line) VALUES(team_a, team_a_odds, team_b, team_b_odds, spread, over_under_line)
 -- updating games

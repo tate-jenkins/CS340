@@ -71,7 +71,21 @@
 <div class = "column">
 <div id="table-wrapper">
 <table border = 1>
-    <legend>Bet Slips</legend>
+    <legend>Bet Slips
+    <div>Filter by Game
+        <form method="POST" action="/filter_bet_slips">
+            <fieldset>
+                <label for="game_id">Game </label>
+                <select name="game_id" id="game_id">
+                    {% for game in games %}
+                        <option value="{{ game[0] }}">{{ game[1] }} vs. {{ game[2] }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" class="button">
+            </fieldset>
+        </form>
+    </div>
+    </legend>
     <tr>
         <th>Game</th>
         <th>Slip ID</th>
