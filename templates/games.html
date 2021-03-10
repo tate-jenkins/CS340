@@ -57,12 +57,15 @@
             <th>Money Line</th>
             <th>Over/Under</th> 
             <th>Margin</th>
+            <th>Winner</th>
         </tr>
         <tr>
             <td> {{ game[0] }} </td> <!--- Team A (away team)--->
             <td> - {{ game[4] }} </td> <!--- Team A -Spread (spread is default for home team)--->
             <td> {{ game[1] }} </td> <!--- Team A Moneyline to Win--->
             <td> Over {{ game[5] }} </td> <!--- Over --->
+            <td> - {{ game[7] }} </td>
+            <td>{{ game[8] }}</td>
         </tr>
         <tr>
             <td> {{ game[2] }} </td> <!--- Team B (home team)--->
@@ -70,6 +73,7 @@
             <td> {{ game[3] }} </td> <!--- Team B Moneyline to Win--->
             <td> Under {{ game[5] }} </td> <!--- Under --->
             <td>{{ game[7] }}</td>
+            <td>{{ game[8] }}</td>
         </tr>
     </table>
 {% endfor %}
