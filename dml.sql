@@ -39,3 +39,15 @@ WHERE Parlay.user_id = :user_id AND Parlay_bet_slips.slip_id = :slip_id
 DELETE FROM Users_bet_slips WHERE slip_id = :slip_id AND user_id = :user_id
 -- Check if bet slip is associated to multiple bets (multiple users)
 SELECT COUNT(user_id) FROM Users_bet_slips WHERE slip_id = :slip_id AND user_id = :user_id
+
+-- Get info on bet_slips that need to be paid out and user_id for balance of each bet
+SELECT Users_bet_slips.user_id, Bet_slips.bet_type, Bet_slips.wager, Bet_slips.game_id
+FROM Bet_slips
+INNER JOIN Users_bet_slips ON Users_bet_slips.slip_id = Bet_slips.slip_id
+WHERE bet_won = 1 and payout_status = `NULL`
+--Get payout odds for specific wager
+SELECT team_a_odds FROM Games WHERE game_id = :game_id
+SELECT team_b_odds FROM Games WHERE game_id = :game_id
+-- Update user balance
+SELECT balance FROM Users WHERE user_id = :user_id
+UPDATE Users SET balance = :old_balance+payout WHERE user_id = :user_id

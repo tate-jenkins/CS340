@@ -266,7 +266,6 @@ def games():
             cur.execute("UPDATE Bet_slips SET bet_won = '1' WHERE game_id = %s AND bet_type = 'TEAM_B_MONEY_LINE'", (game_id))
             mysql.connection.commit()
 
-
         cur.close()
         cur = mysql.connection.cursor()
         spread = cur.execute("SELECT spread FROM Games WHERE game_id = %s", (game_id))
@@ -283,14 +282,53 @@ def games():
             mysql.connection.commit()
             cur.execute("UPDATE Bet_slips SET bet_won = '1' WHERE game_id = %s AND bet_type = 'TEAM_B_SPREAD'", (game_id))
             mysql.connection.commit()
-        
-        cur.close()
+        # Update user balances
+        bets_to_be_paid = cur.execute("SELECT Users_bet_slips.user_id, Bet_slips.bet_type, Bet_slips.wager, Bet_slips.game_id \
+                    FROM Bet_slips INNER JOIN Users_bet_slips ON \
+                    Users_bet_slips.slip_id = Bet_slips.slip_id WHERE bet_won = 1 AND payout_status IS NULL")
+        if bets_to_be_paid > 0:
+            bets_to_be_paid = cur.fetchall()
+            for bet in bets_to_be_paid:
+                if bet[1] == 'TEAM_A_MONEY_LINE':
+                    #calculate payout
+                    odds = cur.execute("SELECT team_a_odds FROM Games WHERE game_id = %s", (str(bet[3])))
+                    if odds > 0:
+                        odds = cur.fetchone()[0]
+                        if odds > 0:
+                            payout = int(odds)/100.0 * int(bet[2])
+                        elif odds < 0:
+                            payout = abs(int(odds)) / 100.0 * int(bet[2])
+                    payout_apply_to_balance(payout, str(bet[0]))
+                elif bet[1] == 'TEAM_B_MONEY_LINE':
+                    #calculate payout
+                    odds = cur.execute("SELECT team_a_odds FROM Games WHERE game_id = %s", (bet[3]))
+                    if odds > 0:
+                        odds = cur.fetchone()[0]
+                        if odds > 0:
+                            payout = int(odds)/100.0 * int(bet[2])
+                        elif odds < 0:
+                            payout = abs(int(odds)) / 100.0 * int(bet[2])
+                    payout_apply_to_balance(payout, str(bet[0]))
+                else:
+                    payout = int(bet[2])
+                    payout_apply_to_balance(payout, str(bet[0]))
         return redirect('/games')
     cur = mysql.connection.cursor()
     resultValue = cur.execute("SELECT team_a, team_a_odds, team_b, team_b_odds, spread, over_under_line, game_id, game_winner_margin, game_winner, game_total FROM Games")
     if resultValue > 0:
         games = cur.fetchall()
         return render_template('games.html', games=games)
+
+def payout_apply_to_balance(payout, user_id):
+    print(payout, type(payout))
+    print(user_id, type(user_id))
+    cur = mysql.connection.cursor()
+    current_balance = cur.execute("SELECT balance FROM Users WHERE user_id = %s",(user_id))
+    if current_balance > 0:
+        current_balance = float(cur.fetchone()[0])
+        cur.execute("UPDATE Users SET balance = %s WHERE user_id = %s", (current_balance+payout, user_id))
+        mysql.connection.commit()
+    cur.close()
 
 @app.route('/parlays', methods=['GET', 'POST'])
 def parlays():
