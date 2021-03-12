@@ -41,6 +41,9 @@
         <br>
         Result (Put Team B (home team) margin. Example: Home team wins by 3, enter 3) <input type="number" name="margin" />
         <br>
+        <br>
+        Total points scored<input type="number" name="total" />
+        <br>
         <input type="submit" class="button">
     </fieldset>
 </form>
@@ -58,6 +61,7 @@
             <th>Over/Under</th> 
             <th>Margin</th>
             <th>Winner</th>
+            <th>Total</th>
         </tr>
         <tr>
             <td> {{ game[0] }} </td> <!--- Team A (away team)--->
@@ -66,6 +70,7 @@
             <td> Over {{ game[5] }} </td> <!--- Over --->
             <td> - {{ game[7] }} </td>
             <td>{{ game[8] }}</td>
+            <td>{{ game[9] }}</td>
         </tr>
         <tr>
             <td> {{ game[2] }} </td> <!--- Team B (home team)--->

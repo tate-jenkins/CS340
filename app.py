@@ -231,12 +231,26 @@ def games():
         mysql.connection.commit()
         cur.close()
         return redirect('/games')
-    if gameDetails.get('game', False) and gameDetails.get('margin', False):
+    if gameDetails.get('game', False) and gameDetails.get('margin', False) and gameDetails.get('total', False):
         game_id = gameDetails['game']
         margin = gameDetails['margin']
+        total = gameDetails['total']
         cur = mysql.connection.cursor()
-        cur.execute("UPDATE Games SET game_winner_margin = %s where game_id = %s", (margin, game_id))
+        cur.execute("UPDATE Games SET game_winner_margin = %s, game_total = %s where game_id = %s", (margin, total, game_id))
         mysql.connection.commit()
+        over_under_line = cur.execute("SELECT over_under_line FROM Games WHERE game_id = %s", (game_id))
+        if over_under_line > 0:
+            over_under_line = cur.fetchone()
+            if (int(total) - int(over_under_line[0])) > 0:
+                cur.execute("UPDATE Bet_slips SET bet_won = '1' WHERE game_id = %s AND bet_type = 'OVER'", (game_id))
+                mysql.connection.commit()
+                cur.execute("UPDATE Bet_slips SET bet_won = '0' WHERE game_id = %s AND bet_type = 'UNDER'", (game_id))
+                mysql.connection.commit()
+            elif (int(total) - int(over_under_line[0])) < 0:
+                cur.execute("UPDATE Bet_slips SET bet_won = '0' WHERE game_id = %s AND bet_type = 'OVER'", (game_id))
+                mysql.connection.commit()
+                cur.execute("UPDATE Bet_slips SET bet_won = '1' WHERE game_id = %s AND bet_type = 'UNDER'", (game_id))
+                mysql.connection.commit()
         if int(margin) < 0:
             cur.execute("UPDATE Games SET game_winner = team_a WHERE game_id = %s", (game_id))
             mysql.connection.commit()
@@ -251,6 +265,8 @@ def games():
             mysql.connection.commit()
             cur.execute("UPDATE Bet_slips SET bet_won = '1' WHERE game_id = %s AND bet_type = 'TEAM_B_MONEY_LINE'", (game_id))
             mysql.connection.commit()
+
+
         cur.close()
         cur = mysql.connection.cursor()
         spread = cur.execute("SELECT spread FROM Games WHERE game_id = %s", (game_id))
@@ -271,7 +287,7 @@ def games():
         cur.close()
         return redirect('/games')
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT team_a, team_a_odds, team_b, team_b_odds, spread, over_under_line, game_id, game_winner_margin, game_winner FROM Games")
+    resultValue = cur.execute("SELECT team_a, team_a_odds, team_b, team_b_odds, spread, over_under_line, game_id, game_winner_margin, game_winner, game_total FROM Games")
     if resultValue > 0:
         games = cur.fetchall()
         return render_template('games.html', games=games)

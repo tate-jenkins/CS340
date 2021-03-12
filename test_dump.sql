@@ -40,6 +40,7 @@ CREATE TABLE `Games` (
 `over_under_line` decimal(3,1) NOT NULL,
 `game_winner` varchar(255) DEFAULT NULL,
 `game_winner_margin` int(11) DEFAULT NULL,
+`game_total` int(11) DEFAULT NULL,
 PRIMARY KEY (`game_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
