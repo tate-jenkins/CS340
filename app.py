@@ -283,11 +283,37 @@ def games():
             cur.execute("UPDATE Bet_slips SET bet_won = '1' WHERE game_id = %s AND bet_type = 'TEAM_B_SPREAD'", (game_id))
             mysql.connection.commit()
         # Update user balances
-        bets_to_be_paid = cur.execute("SELECT Users_bet_slips.user_id, Bet_slips.bet_type, Bet_slips.wager, Bet_slips.game_id \
+        parlayed_bets = cur.execute("SELECT Parlay.parlay_id, Parlay.user_id, Parlay.payout_status, Parlay_bet_slips.slip_id \
+                    FROM Parlay INNER JOIN Parlay_bet_slips ON \
+                    Parlay_bet_slips.parlay_id = Parlay.parlay_id")
+        if parlayed_bets > 0:
+            parlayed_bets = cur.fetchall()
+        parlay_dict = {}
+
+        for bet in parlayed_bets:
+            parlay_dict.setdefault(bet[0], []).append(bet[3])
+
+        bets_to_be_paid = cur.execute("SELECT Users_bet_slips.user_id, Bet_slips.bet_type, Bet_slips.wager, Bet_slips.game_id, Bet_slips.slip_id \
                     FROM Bet_slips INNER JOIN Users_bet_slips ON \
                     Users_bet_slips.slip_id = Bet_slips.slip_id WHERE bet_won = 1 AND payout_status IS NULL")
         if bets_to_be_paid > 0:
             bets_to_be_paid = cur.fetchall()
+
+            p1 = ''
+            p2 = ''
+            for bet in bets_to_be_paid:
+                for key, val in parlay_dict.items():
+                    if bet[4] in val:
+                        p1 = val[0]
+                        p2 = val[1]
+
+            bet_slips_list = []
+            for bet in bets_to_be_paid:
+                bet_slips_list.append(bet[4])
+
+            if len(parlay_dict.items()) > 0 and not (p1 in bet_slips_list and p2 in bet_slips_list):
+                return redirect('/games')
+
             for bet in bets_to_be_paid:
                 if bet[1] == 'TEAM_A_MONEY_LINE':
                     #calculate payout
@@ -296,17 +322,17 @@ def games():
                         odds = cur.fetchone()[0]
                         if odds > 0:
                             payout = int(odds)/100.0 * int(bet[2])
-                        elif odds < 0:
+                        elif odds <= 0:
                             payout = abs(int(odds)) / 100.0 * int(bet[2])
                     payout_apply_to_balance(payout, str(bet[0]))
                 elif bet[1] == 'TEAM_B_MONEY_LINE':
                     #calculate payout
-                    odds = cur.execute("SELECT team_a_odds FROM Games WHERE game_id = %s", (bet[3]))
+                    odds = cur.execute("SELECT team_b_odds FROM Games WHERE game_id = %s", (str(bet[3])))
                     if odds > 0:
                         odds = cur.fetchone()[0]
                         if odds > 0:
                             payout = int(odds)/100.0 * int(bet[2])
-                        elif odds < 0:
+                        elif odds <= 0:
                             payout = abs(int(odds)) / 100.0 * int(bet[2])
                     payout_apply_to_balance(payout, str(bet[0]))
                 else:
